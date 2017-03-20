@@ -67,3 +67,7 @@ size_t readMidiVarLenInteger(unsigned int& out, std::ifstream& strm){
     //return the number of bytes we consumed from the stream
     return len;
 }
+
+void readMidiVarLenDataArray(std::vector<unsigned char> &data, std::ifstream &strm) {
+
+}

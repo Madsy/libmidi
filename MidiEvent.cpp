@@ -58,11 +58,11 @@ float MidiEvent::getTimestamp() const {
     return 0;
 }
 
-void MidiEvent::setTimestamp(float t) {
+void MidiEvent::print() {
 
 }
 
-void MidiEvent::print() {
+MidiEvent::MidiEvent(unsigned int timestamp) : pTick(timestamp){
 
 }
 

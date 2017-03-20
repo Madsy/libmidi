@@ -7,36 +7,21 @@
 
 
 #include "MidiEvent.h"
-//#include "MidiEventFactory.h"
-
-/*
-    EVT_NOTE_OFF        = 0x0
-    EVT_NOTE_ON         = 0x1
-    EVT_AFTERTOUCH1     = 0x2
-    EVT_CONTROL_CHANGE  = 0x3
-    EVT_PROGRAM_CHANGE  = 0x4
-    EVT_AFTERTOUCH2     = 0x5
-    EVT_PITCH_WHEEL     = 0x6
-*/
-
 
 
 class MidiEventFactory;
 
 
-//Base class for channel-based events
+//Base class for channel-based events. All channel-based events have a channel.
 class ChannelEvent : public MidiEvent {
 public:
     friend class MidiEventFactory;
     int getChannel() const;
 protected:
-    ChannelEvent(int ch);
+    ChannelEvent(unsigned int timestamp, int ch);
 private:
     int pChannel;
 };
-
-
-
 
 
 
@@ -46,7 +31,7 @@ public:
     int getKey() const;
     int getVelocity() const;
 protected:
-    ChEvtNoteOff(int ch, int k, int v);
+    ChEvtNoteOff(unsigned int timestamp, int ch, int k, int v);
 private:
     int pKey;
     int pVelocity;
@@ -58,7 +43,7 @@ public:
     int getKey() const;
     int getVelocity() const;
 protected:
-    ChEvtNoteOn(int ch, int k, int v);
+    ChEvtNoteOn(unsigned int timestamp, int ch, int k, int v);
 private:
     int pKey;
     int pVelocity;
@@ -71,7 +56,7 @@ public:
     int getKey() const;
     int getPressure() const;
 protected:
-    ChEvtAfterTouch1(int ch, int k, int p);
+    ChEvtAfterTouch1(unsigned int timestamp, int ch, int k, int p);
 private:
     int pKey;
     int pPressure;
@@ -83,7 +68,7 @@ public:
     int getControllerID() const;
     int getValue() const;
 protected:
-    ChEvtControlChange(int ch, int id, int val);
+    ChEvtControlChange(unsigned int timestamp, int ch, int id, int val);
 private:
     int pControllerID;
     int pValue;
@@ -94,7 +79,7 @@ public:
     friend class MidiEventFactory;
     int getPatchValue() const;
 protected:
-    ChEvtProgramChange(int ch, int patch);
+    ChEvtProgramChange(unsigned int timestamp, int ch, int patch);
 private:
     int pPatch;
 };
@@ -105,7 +90,7 @@ public:
     friend class MidiEventFactory;
     int getPressure() const;
 protected:
-    ChEvtAfterTouch2(int ch, int p);
+    ChEvtAfterTouch2(unsigned int timestamp, int ch, int p);
 private:
     int pPressure;
 };
@@ -115,7 +100,7 @@ public:
     friend class MidiEventFactory;
     int getValue() const;
 protected:
-    ChEvtPitchWheel(int ch, int v);
+    ChEvtPitchWheel(unsigned int timestamp, int ch, int v);
 private:
     int pValue;
 };

@@ -4,7 +4,7 @@
 
 #include "ChannelEvent.h"
 
-ChannelEvent::ChannelEvent(int ch) : pChannel(ch){
+ChannelEvent::ChannelEvent(unsigned int timestamp, int ch) : MidiEvent(timestamp), pChannel(ch){
 
 }
 
@@ -15,8 +15,8 @@ int ChannelEvent::getChannel() const {
 
 
 //ChEvtNoteOff
-ChEvtNoteOff::ChEvtNoteOff(int ch, int k, int v) :
-        ChannelEvent(ch), pKey(k), pVelocity(v){
+ChEvtNoteOff::ChEvtNoteOff(unsigned int timestamp, int ch, int k, int v) :
+        ChannelEvent(timestamp, ch), pKey(k), pVelocity(v){
 
 }
 
@@ -31,8 +31,8 @@ int ChEvtNoteOff::getVelocity() const {
 
 
 //ChEvtNoteOn
-ChEvtNoteOn::ChEvtNoteOn(int ch, int k, int v) :
-        ChannelEvent(ch), pKey(k), pVelocity(v){
+ChEvtNoteOn::ChEvtNoteOn(unsigned int timestamp, int ch, int k, int v) :
+        ChannelEvent(timestamp, ch), pKey(k), pVelocity(v){
 
 }
 
@@ -47,8 +47,8 @@ int ChEvtNoteOn::getKey() const {
 
 
 //ChEvtAfterTouch1
-ChEvtAfterTouch1::ChEvtAfterTouch1(int ch, int k, int p) :
-        ChannelEvent(ch), pKey(k), pPressure(p){
+ChEvtAfterTouch1::ChEvtAfterTouch1(unsigned int timestamp, int ch, int k, int p) :
+        ChannelEvent(timestamp, ch), pKey(k), pPressure(p){
 
 }
 
@@ -63,8 +63,8 @@ int ChEvtAfterTouch1::getPressure() const {
 
 
 //ChEvtControlChange
-ChEvtControlChange::ChEvtControlChange(int ch, int id, int val) :
-        ChannelEvent(ch), pControllerID(id), pValue(val){
+ChEvtControlChange::ChEvtControlChange(unsigned int timestamp, int ch, int id, int val) :
+        ChannelEvent(timestamp, ch), pControllerID(id), pValue(val){
 
 }
 
@@ -77,8 +77,8 @@ int ChEvtControlChange::getValue() const {
 }
 
 
-ChEvtProgramChange::ChEvtProgramChange(int ch, int patch) :
-        ChannelEvent(ch), pPatch(patch){
+ChEvtProgramChange::ChEvtProgramChange(unsigned int timestamp, int ch, int patch) :
+        ChannelEvent(timestamp, ch), pPatch(patch){
 
 }
 
@@ -87,8 +87,8 @@ int ChEvtProgramChange::getPatchValue() const {
 }
 
 
-ChEvtAfterTouch2::ChEvtAfterTouch2(int ch, int p) :
-        ChannelEvent(ch), pPressure(p){
+ChEvtAfterTouch2::ChEvtAfterTouch2(unsigned int timestamp, int ch, int p) :
+        ChannelEvent(timestamp, ch), pPressure(p){
 
 }
 
@@ -97,8 +97,8 @@ int ChEvtAfterTouch2::getPressure() const {
 }
 
 
-ChEvtPitchWheel::ChEvtPitchWheel(int ch, int v) :
-        ChannelEvent(ch), pValue(v){
+ChEvtPitchWheel::ChEvtPitchWheel(unsigned int timestamp, int ch, int v) :
+        ChannelEvent(timestamp, ch), pValue(v){
 
 }
 

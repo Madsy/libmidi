@@ -166,6 +166,7 @@ void MidiFile::readTracks() {
         unsigned int bytesread = 0;
         while(bytesread < pTrackChunkInfo[i]->length){
             unsigned int len = 0;
+            unsigned int timestamp = 0;
             track.push_back(std::move(MidiEventFactory::createMidiEvent(len, pStrm)));
             bytesread += len;
         }

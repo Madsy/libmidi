@@ -9,6 +9,8 @@
 #include "MidiEvent.h"
 #include "MidiIOUtils.h"
 #include "ChannelEvent.h"
+#include "SystemCommonEvent.h"
+#include "SystemRealtimeEvent.h"
 
 class MidiEventFactory {
 public:
@@ -20,15 +22,18 @@ private:
     createChannelEvent(unsigned int& bytesread,
                        std::ifstream& strm,
                        MidiEvent::ChannelEventType type,
+                       unsigned int timestamp,
                        int channel);
     static std::unique_ptr<MidiEvent>
     createSystemCommonEvent(unsigned int& bytesread,
                             std::ifstream& strm,
-                            MidiEvent::SystemCommonEventType type);
+                            MidiEvent::SystemCommonEventType type,
+                            unsigned int timestamp);
     static std::unique_ptr<MidiEvent>
     createSystemRealtimeEvent(unsigned int& bytesread,
                               std::ifstream& strm,
-                              MidiEvent::SystemRealtimeEventType type);
+                              MidiEvent::SystemRealtimeEventType type,
+                              unsigned int timestamp);
 };
 
 #endif //MIDITEST_MIDIEVENTFACTORY_H

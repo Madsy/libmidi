@@ -63,7 +63,6 @@
 
 class MidiEvent {
 public:
-
     enum class MidiEventType {
         EVT_CHANNEL,
         EVT_SYSCOMMON,
@@ -102,6 +101,7 @@ public:
         EVT_RESET                   = 0xF
     };
 
+    MidiEvent(unsigned int timestamp);
     /* High level message group */
     static MidiEvent::MidiEventType getEventType(unsigned char event);
     /* Classify the sub-type of the events */
@@ -111,8 +111,9 @@ public:
 
     MidiEvent();
     virtual float getTimestamp() const;
-    virtual void setTimestamp(float t);
     virtual void print();
+private:
+    unsigned int pTick; //used for timestamps
 };
 
 #endif //MIDITEST_MIDIEVENT_H
