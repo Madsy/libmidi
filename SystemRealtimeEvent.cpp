@@ -24,6 +24,4 @@ SysRtEvtActiveSensing::SysRtEvtActiveSensing(unsigned int timestamp) : MidiEvent
 
 }
 
-SysRtEvtReset::SysRtEvtReset(unsigned int timestamp) : MidiEvent(timestamp){
 
-}

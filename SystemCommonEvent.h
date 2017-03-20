@@ -10,6 +10,7 @@
 #include "MidiEvent.h"
 
 class SysCmnEvtExclusive : public MidiEvent {
+    friend class MidiEventFactory;
 public:
     int getManufacturerID() const;
     const std::vector<unsigned char>& getData() const;
@@ -21,6 +22,7 @@ private:
 };
 
 class SysCmnEvtSongPositionCounter : public MidiEvent {
+    friend class MidiEventFactory;
 public:
     int getSongPosition() const;
 protected:
@@ -30,6 +32,7 @@ private:
 };
 
 class SysCmnEvtSongSelect : public MidiEvent {
+    friend class MidiEventFactory;
 public:
     int getSongID() const;
 protected:
@@ -41,12 +44,14 @@ private:
 
 //Oscillators should be tunes. No data in this class.
 class SysCmnEvtTuneRequest : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysCmnEvtTuneRequest(unsigned int timestamp);
 };
 
 //Marks the end of an exclusive message. No data in this class.
 class SysCmnEvtEndExclusive : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysCmnEvtEndExclusive(unsigned int timestamp);
 };

@@ -49,6 +49,7 @@ MidiFile::MidiFile(const std::string &name) : pStrm(name.c_str(), std::ios::bina
     if(!pStrm.is_open()){
         throw std::runtime_error("File not found");
     }
+    pStrm.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
     load(name);
 }
 

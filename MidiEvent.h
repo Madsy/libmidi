@@ -51,7 +51,6 @@
      * Stop.
      * Undefined.
      * Active Sensing.
-     * Reset.
  */
 
 #include <memory>
@@ -64,9 +63,11 @@
 class MidiEvent {
 public:
     enum class MidiEventType {
+        EVT_INVALID,
         EVT_CHANNEL,
         EVT_SYSCOMMON,
-        EVT_SYSRT
+        EVT_SYSRT,
+        EVT_META //0xFF is used for RESET in a MIDI stream, but marks the start of a meta event in MIDI files
     };
 
     enum class ChannelEventType {
@@ -97,8 +98,23 @@ public:
         EVT_CONTINUE                = 0xB,
         EVT_STOP                    = 0xC,
         /* UNDEFINED = 0xD */
-        EVT_ACTIVE_SENSING          = 0xE,
-        EVT_RESET                   = 0xF
+        EVT_ACTIVE_SENSING          = 0xE
+    };
+
+    enum class MetaEventType {
+        EVT_SEQUENCE_NUMBER = 0xFF0002,
+        EVT_TEXT = 0x01,
+        EVT_COPYRIGHT = 0x02,
+        EVT_TRACK_NAME = 0x03,
+        EVT_INSTRUMENT_NAME = 0x04,
+        EVT_LYRICS = 0x5,
+        EVT_MARKER = 0x6,
+        EVT_CUE_POINT = 0x7,
+        EVT_MIDI_CHANNEL_PREFIX = 0xFF2001,
+        EVT_END_OF_TRACK = 0xFF2F00,
+        EVT_SET_TEMPO = 0xFF5103,
+        EVT_SMPTE_OFFSET = 0xFF5405,
+        EVT_TIME_SIGNATURE = 0xFF5804
     };
 
     MidiEvent(unsigned int timestamp);
@@ -107,8 +123,9 @@ public:
     /* Classify the sub-type of the events */
     static MidiEvent::ChannelEventType getChannelEventType(unsigned char event);
     static MidiEvent::SystemCommonEventType getSystemCommonEventType(unsigned char event);
-    static MidiEvent::SystemRealtimeEventType getSystemRealtimeEventtype(unsigned char event);
-
+    static MidiEvent::SystemRealtimeEventType getSystemRealtimeEventType(unsigned char event);
+    //Special case. Meta event types are not fixed in length. Some codes are up to 3 bytes.
+    static MidiEvent::MetaEventType getMetaEventType(unsigned int& bytesread, std::ifstream& strm);
     MidiEvent();
     virtual float getTimestamp() const;
     virtual void print();

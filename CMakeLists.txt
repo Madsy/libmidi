@@ -16,5 +16,5 @@ set(SOURCE_FILES
         MidiEventFactory.cpp
         MidiIOUtils.cpp
         MidiIOUtils.h
-        MidiEventFactory.h SystemCommonEvent.cpp SystemCommonEvent.h SystemRealtimeEvent.cpp SystemRealtimeEvent.h)
+        MidiEventFactory.h SystemCommonEvent.cpp SystemCommonEvent.h SystemRealtimeEvent.cpp SystemRealtimeEvent.h MetaEvent.cpp MetaEvent.h)
 add_executable(miditest ${SOURCE_FILES})

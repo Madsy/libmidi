@@ -34,6 +34,11 @@ private:
                               std::ifstream& strm,
                               MidiEvent::SystemRealtimeEventType type,
                               unsigned int timestamp);
+    static std::unique_ptr<MidiEvent>
+    createMetaEvent(unsigned int& bytesread,
+                              std::ifstream& strm,
+                              MidiEvent::MetaEventType type,
+                              unsigned int timestamp);
 };
 
 #endif //MIDITEST_MIDIEVENTFACTORY_H

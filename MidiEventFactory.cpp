@@ -12,6 +12,7 @@ MidiEventFactory::createChannelEvent(
         unsigned int timestamp,
         int channel){
 
+
     MidiEvent* result = nullptr;
     unsigned char arg1, arg2;
 
@@ -73,15 +74,54 @@ MidiEventFactory::createSystemCommonEvent(
         std::ifstream& strm,
         MidiEvent::SystemCommonEventType type,
         unsigned int timestamp){
+
+
+    MidiEvent* result = nullptr;
+    unsigned char arg1, arg2, data7bits;
+
     switch(type){
-        case MidiEvent::SystemCommonEventType::EVT_SYSTEM_EXCLUSIVE:
-        case MidiEvent::SystemCommonEventType::EVT_SONG_POSITION_POINTER:
-        case MidiEvent::SystemCommonEventType::EVT_SONG_SELECT:
-        case MidiEvent::SystemCommonEventType::EVT_TUNE_REQUEST:
-        case MidiEvent::SystemCommonEventType::EVT_END_OF_EXCLUSIVE:
+        case MidiEvent::SystemCommonEventType::EVT_SYSTEM_EXCLUSIVE:{
+            std::vector<unsigned char> data;
+            strm.read((char *) &arg1, 1);
+
+            do {
+                strm.read((char *) &data7bits, 1);
+                //TODO: Assemble the bits (remove the MSB)
+                data.push_back(data7bits);
+            } while(data7bits != 0xF7u);
+
+            result = new SysCmnEvtExclusive(timestamp, arg1, data);
+            bytesread += (data.size() + 1);
             break;
+        }
+        case MidiEvent::SystemCommonEventType::EVT_SONG_POSITION_POINTER:{
+            strm.read((char *) &arg1, 1);
+            strm.read((char *) &arg2, 1);
+            int timecounter = (arg2<<7)|arg1;
+            //14-bit song position
+            result = new SysCmnEvtSongPositionCounter(timestamp, timecounter);
+            bytesread += 2;
+            break;
+        }
+        case MidiEvent::SystemCommonEventType::EVT_SONG_SELECT:{
+            strm.read((char *) &arg1, 1);
+            //7-bit song select value
+            result = new SysCmnEvtSongSelect(timestamp, arg1);
+            bytesread += 1;
+            break;
+        }
+        case MidiEvent::SystemCommonEventType::EVT_TUNE_REQUEST:{
+            result = new SysCmnEvtTuneRequest(timestamp);
+            //bytesread += 0;
+            break;
+        }
+        //Not really an independent event, so kept unimplemented.
+        //Used by EVT_SYSTEM_EXCLUSIVE
+        case MidiEvent::SystemCommonEventType::EVT_END_OF_EXCLUSIVE:{
+            break;
+        }
     }
-    return std::make_unique<MidiEvent>();
+    return std::unique_ptr<MidiEvent>(result);
 }
 
 std::unique_ptr<MidiEvent>
@@ -90,18 +130,83 @@ MidiEventFactory::createSystemRealtimeEvent(
         std::ifstream& strm,
         MidiEvent::SystemRealtimeEventType type,
         unsigned int timestamp){
+
+
+    MidiEvent* result = nullptr;
+
     switch(type){
-        case MidiEvent::SystemRealtimeEventType::EVT_TIMING_CLOCK:
-        case MidiEvent::SystemRealtimeEventType::EVT_START:
-        case MidiEvent::SystemRealtimeEventType::EVT_CONTINUE:
-        case MidiEvent::SystemRealtimeEventType::EVT_STOP:
-        case MidiEvent::SystemRealtimeEventType::EVT_ACTIVE_SENSING:
-        case MidiEvent::SystemRealtimeEventType::EVT_RESET:
+        case MidiEvent::SystemRealtimeEventType::EVT_TIMING_CLOCK:{
+            result = new SysRtEvtTimingClock(timestamp);
             break;
+        }
+        case MidiEvent::SystemRealtimeEventType::EVT_START:{
+            result = new SysRtEvtStart(timestamp);
+            break;
+        }
+        case MidiEvent::SystemRealtimeEventType::EVT_CONTINUE:{
+            result = new SysRtEvtContinue(timestamp);
+            break;
+        }
+        case MidiEvent::SystemRealtimeEventType::EVT_STOP:{
+            result = new SysRtEvtStop(timestamp);
+            break;
+        }
+        case MidiEvent::SystemRealtimeEventType::EVT_ACTIVE_SENSING:{
+            result = new SysRtEvtActiveSensing(timestamp);
+            break;
+        }
     }
-    return std::make_unique<MidiEvent>();
+    return std::unique_ptr<MidiEvent>(result);
 }
 
+std::unique_ptr<MidiEvent>
+MidiEventFactory::createMetaEvent(
+        unsigned int &bytesread,
+        std::ifstream &strm,
+        MidiEvent::MetaEventType type,
+        unsigned int timestamp) {
+
+    MidiEvent* result = nullptr;
+
+    switch(type) {
+        case MidiEvent::MetaEventType::EVT_SEQUENCE_NUMBER:
+            break;
+        case MidiEvent::MetaEventType::EVT_TEXT:
+            break;
+        case MidiEvent::MetaEventType::EVT_COPYRIGHT:
+            break;
+        case MidiEvent::MetaEventType::EVT_TRACK_NAME:
+            break;
+        case MidiEvent::MetaEventType::EVT_INSTRUMENT_NAME:
+            break;
+        case MidiEvent::MetaEventType::EVT_LYRICS:
+            break;
+        case MidiEvent::MetaEventType::EVT_MARKER:
+            break;
+        case MidiEvent::MetaEventType::EVT_CUE_POINT:
+            break;
+        case MidiEvent::MetaEventType::EVT_MIDI_CHANNEL_PREFIX:
+            break;
+        case MidiEvent::MetaEventType::EVT_END_OF_TRACK:
+            break;
+        case MidiEvent::MetaEventType::EVT_SET_TEMPO:
+            break;
+        case MidiEvent::MetaEventType::EVT_SMPTE_OFFSET:
+            break;
+        case MidiEvent::MetaEventType::EVT_TIME_SIGNATURE:
+            break;
+    }
+    return std::unique_ptr<MidiEvent>();
+}
+
+
+
+
+
+
+
+
+//Event factory function
 std::unique_ptr<MidiEvent>
 MidiEventFactory::createMidiEvent(
         unsigned int& bytesread,
@@ -128,7 +233,7 @@ MidiEventFactory::createMidiEvent(
             return createSystemCommonEvent(bytesread, strm, SysCmn, timestamp);
         }
         case MidiEvent::MidiEventType::EVT_SYSRT: {
-            MidiEvent::SystemRealtimeEventType SysRt = MidiEvent::getSystemRealtimeEventtype(event_type_byte);
+            MidiEvent::SystemRealtimeEventType SysRt = MidiEvent::getSystemRealtimeEventType(event_type_byte);
             return createSystemRealtimeEvent(bytesread, strm, SysRt, timestamp);
         }
     }
@@ -137,5 +242,7 @@ MidiEventFactory::createMidiEvent(
 MidiEventFactory::~MidiEventFactory() {
 
 }
+
+
 
 

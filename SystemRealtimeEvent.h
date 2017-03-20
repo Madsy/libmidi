@@ -10,34 +10,36 @@
 
 /* None of the currently implemented Realtime events have any data */
 class SysRtEvtTimingClock : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysRtEvtTimingClock(unsigned int timestamp);
 };
 
 class SysRtEvtStart : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysRtEvtStart(unsigned int timestamp);
 };
 
 class SysRtEvtContinue : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysRtEvtContinue(unsigned int timestamp);
 };
 
 class SysRtEvtStop : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysRtEvtStop(unsigned int timestamp);
 };
 
 class SysRtEvtActiveSensing : public MidiEvent {
+    friend class MidiEventFactory;
 protected:
     SysRtEvtActiveSensing(unsigned int timestamp);
 };
 
-class SysRtEvtReset : public MidiEvent {
-protected:
-    SysRtEvtReset(unsigned int timestamp);
-};
+
 
 
 #endif //MIDITEST_SYSTEMREALTIMEEVENT_H
