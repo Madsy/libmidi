@@ -13,22 +13,20 @@ MidiEvent::MidiEventType MidiEvent::getEventType(unsigned char event) {
 
     //MSB must be set
     if(!(highest_nibble & 0x8)){
-        return MidiEvent::MidiEventType::EVT_INVALID;
+        return MidiEvent::MidiEventType::EVT_RUNNING_STATUS;
     }
 
-    MidiEvent::MidiEventType type = MidiEvent::MidiEventType::EVT_INVALID;
     if(highest_nibble < 0xF){
-        type = MidiEvent::MidiEventType::EVT_CHANNEL;
+        return MidiEvent::MidiEventType::EVT_CHANNEL;
     } else { //highest_nibble == 0xF
         if(lowest_nibble == 0xF){
-            type = MidiEvent::MidiEventType ::EVT_META;
+            return MidiEvent::MidiEventType ::EVT_META;
         } else if(lowest_nibble < 0x8){
-            type = MidiEvent::MidiEventType ::EVT_SYSCOMMON;
+            return MidiEvent::MidiEventType ::EVT_SYSCOMMON;
         } else {
-            type = MidiEvent::MidiEventType ::EVT_SYSRT;
+            return MidiEvent::MidiEventType ::EVT_SYSRT;
         }
     }
-    return type;
 }
 
 MidiEvent::ChannelEventType MidiEvent::getChannelEventType(unsigned char event) {
@@ -65,9 +63,7 @@ MidiEvent::MetaEventType MidiEvent::getMetaEventType(unsigned int& bytesread, st
     unsigned char byte1, byte2, byte3;
     byte1 = byte2 = byte3 = 0;
     strm.read((char*)&byte1, 1);
-
-    //if(byte1 == 0x0 || byte1 == 0x20 || byte1 == 0x2F || byte1 == 0x51 || byte1 == 0x54 || byte1 == 0x58){
-
+    bytesread++;
 
     switch (byte1) {
         case 0x0:{
@@ -76,6 +72,7 @@ MidiEvent::MetaEventType MidiEvent::getMetaEventType(unsigned int& bytesread, st
             strm.read((char*)&byte1, 1);
             if(byte1 != 2){ throw std::runtime_error("Invalid Meta Event"); }
             type = MidiEvent::MetaEventType::EVT_SEQUENCE_NUMBER;
+            bytesread += 2;
             break;
         }
         case 0x1:
@@ -103,30 +100,46 @@ MidiEvent::MetaEventType MidiEvent::getMetaEventType(unsigned int& bytesread, st
             strm.read((char*)&byte1, 1);
             if(byte1 != 0x1){ throw std::runtime_error("Invalid Meta Event"); }
             type = MidiEvent::MetaEventType::EVT_MIDI_CHANNEL_PREFIX;
+            bytesread += 1;
             break;
         }
         case 0x2F:{
             strm.read((char*)&byte1, 1);
             if(byte1 != 0x0){ throw std::runtime_error("Invalid Meta Event"); }
             type = MidiEvent::MetaEventType::EVT_END_OF_TRACK;
+            bytesread += 1;
             break;
         }
         case 0x51:{
             strm.read((char*)&byte1, 1);
             if(byte1 != 0x3){ throw std::runtime_error("Invalid Meta Event"); }
             type = MidiEvent::MetaEventType::EVT_SET_TEMPO;
+            bytesread += 1;
             break;
         }
         case 0x54:{
             strm.read((char*)&byte1, 1);
             if(byte1 != 0x5){ throw std::runtime_error("Invalid Meta Event"); }
             type = MidiEvent::MetaEventType::EVT_SMPTE_OFFSET;
+            bytesread += 1;
             break;
         }
         case 0x58:{
             strm.read((char*)&byte1, 1);
             if(byte1 != 0x4){ throw std::runtime_error("Invalid Meta Event"); }
             type = MidiEvent::MetaEventType::EVT_TIME_SIGNATURE;
+            bytesread += 1;
+            break;
+        }
+        case 0x59:{
+            strm.read((char*)&byte1, 1);
+            if(byte1 != 0x2){ throw std::runtime_error("Invalid Meta Event"); }
+            type = MidiEvent::MetaEventType::EVT_KEY_SIGNATURE;
+            bytesread += 1;
+            break;
+        }
+        case 0x7F:{
+            type = MidiEvent::MetaEventType::EVT_SEQUENCER_SPECIFIC;
             break;
         }
         default:
@@ -140,11 +153,11 @@ MidiEvent::MidiEvent() {
 }
 
 float MidiEvent::getTimestamp() const {
-    return 0;
+    return pTick;
 }
 
 void MidiEvent::print() {
-
+    printf("class %s event\n", typeid(this).name());
 }
 
 MidiEvent::MidiEvent(unsigned int timestamp) : pTick(timestamp){

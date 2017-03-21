@@ -17,6 +17,7 @@ class ChannelEvent : public MidiEvent {
 public:
     friend class MidiEventFactory;
     int getChannel() const;
+    void print() override;
 protected:
     ChannelEvent(unsigned int timestamp, int ch);
 private:
@@ -30,6 +31,7 @@ public:
     friend class MidiEventFactory;
     int getKey() const;
     int getVelocity() const;
+    void print() override;
 protected:
     ChEvtNoteOff(unsigned int timestamp, int ch, int k, int v);
 private:
@@ -42,6 +44,7 @@ public:
     friend class MidiEventFactory;
     int getKey() const;
     int getVelocity() const;
+    void print() override;
 protected:
     ChEvtNoteOn(unsigned int timestamp, int ch, int k, int v);
 private:
@@ -55,6 +58,7 @@ public:
     friend class MidiEventFactory;
     int getKey() const;
     int getPressure() const;
+    void print() override;
 protected:
     ChEvtAfterTouch1(unsigned int timestamp, int ch, int k, int p);
 private:
@@ -67,6 +71,7 @@ public:
     friend class MidiEventFactory;
     int getControllerID() const;
     int getValue() const;
+    void print() override;
 protected:
     ChEvtControlChange(unsigned int timestamp, int ch, int id, int val);
 private:
@@ -78,6 +83,7 @@ class ChEvtProgramChange : public ChannelEvent {
 public:
     friend class MidiEventFactory;
     int getPatchValue() const;
+    void print() override;
 protected:
     ChEvtProgramChange(unsigned int timestamp, int ch, int patch);
 private:
@@ -89,6 +95,7 @@ class ChEvtAfterTouch2 : public ChannelEvent {
 public:
     friend class MidiEventFactory;
     int getPressure() const;
+    void print() override;
 protected:
     ChEvtAfterTouch2(unsigned int timestamp, int ch, int p);
 private:
@@ -99,6 +106,7 @@ class ChEvtPitchWheel : public ChannelEvent {
 public:
     friend class MidiEventFactory;
     int getValue() const;
+    void print() override;
 protected:
     ChEvtPitchWheel(unsigned int timestamp, int ch, int v);
 private:

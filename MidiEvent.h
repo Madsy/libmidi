@@ -63,7 +63,7 @@
 class MidiEvent {
 public:
     enum class MidiEventType {
-        EVT_INVALID,
+        EVT_RUNNING_STATUS,
         EVT_CHANNEL,
         EVT_SYSCOMMON,
         EVT_SYSRT,
@@ -114,7 +114,9 @@ public:
         EVT_END_OF_TRACK = 0xFF2F00,
         EVT_SET_TEMPO = 0xFF5103,
         EVT_SMPTE_OFFSET = 0xFF5405,
-        EVT_TIME_SIGNATURE = 0xFF5804
+        EVT_TIME_SIGNATURE = 0xFF5804,
+        EVT_KEY_SIGNATURE = 0xFF5902,
+        EVT_SEQUENCER_SPECIFIC = 0xFF7F
     };
 
     MidiEvent(unsigned int timestamp);

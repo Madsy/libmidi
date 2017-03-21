@@ -11,6 +11,7 @@
 #include "ChannelEvent.h"
 #include "SystemCommonEvent.h"
 #include "SystemRealtimeEvent.h"
+#include "MetaEvent.h"
 
 class MidiEventFactory {
 public:
@@ -39,6 +40,7 @@ private:
                               std::ifstream& strm,
                               MidiEvent::MetaEventType type,
                               unsigned int timestamp);
+    static unsigned int previousChannelEventCode;
 };
 
 #endif //MIDITEST_MIDIEVENTFACTORY_H

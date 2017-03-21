@@ -165,14 +165,24 @@ void MidiFile::readTracks() {
         Midi::MidiTrack track;
         pStrm.seekg(pTrackChunkInfo[i]->fileoffs, pStrm.beg);
         unsigned int bytesread = 0;
+        unsigned int time = 0;
+        //18710 vs 18726
         while(bytesread < pTrackChunkInfo[i]->length){
+            unsigned int current_position = 0;
+            current_position = pStrm.tellg();
+            //printf("Bytesread: %u\n", bytesread);
+            //printf("FilePos: %u \t", current_position);
             unsigned int len = 0;
             unsigned int timestamp = 0;
             track.push_back(std::move(MidiEventFactory::createMidiEvent(len, pStrm)));
+            printf("tick %u\t", time);
+            track[track.size() - 1]->print();
+            time += track[track.size() - 1]->getTimestamp();
             bytesread += len;
         }
         pMidiData->pTracks.push_back(std::move(track));
     }
+
 }
 
 MidiFile::~MidiFile() {
