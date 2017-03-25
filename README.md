@@ -1,6 +1,16 @@
 ## libmidi
 
-A simple library for reading .mid files. Work in progress.
+####This is a work in progress.
+
+---
+A simple library for reading .mid files (General Midi) and handling MIDI data from masters.
+Custom instruments can be implemented as a software synthesizer.
+Can make handlers for custom MIDI sequencer messages.
+
+The overarching idea is to make a library which allows a user to easily create software synthesizers which can source
+MIDI events from both trackers/sequencers as well as MIDI files; both for composing music and when creating new synths
+and instruments.
+
 
 #### Dependencies
 
@@ -20,8 +30,6 @@ A simple library for reading .mid files. Work in progress.
 
 + Fully implement all the known MIDI events:
     * Channel Messages:
-        * Note Off Event
-        * Note On Event
         * Polyphonic Key Pressure Event (Aftertouch).
         * Control Change Event
         * Program Change Event
