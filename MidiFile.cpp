@@ -54,13 +54,13 @@ MidiFile::MidiFile(const std::string &name) : pStrm(name.c_str(), std::ios::bina
 }
 
 void MidiFile::load(const std::string &name) {
-    pMidiData = std::make_shared<Midi>();
+    pMidiData = std::unique_ptr<Midi>(new Midi);//std::make_shared<Midi>();
     readChunkInfo();
     readHeader();
     readTracks();
 }
 
-const std::shared_ptr<Midi> MidiFile::data() const {
+std::shared_ptr<Midi> MidiFile::data(){
     return pMidiData;
 }
 
@@ -160,29 +160,36 @@ void MidiFile::readTracks() {
     int numTracks = (int)pTrackChunkInfo.size();
     printf("DEBUG: Number of tracks according to pTrackChunkInfo: %u\n", numTracks);
     printf("DEBUG: Number of tracks according to header: %zu\n", pMidiData->getTrackCount());
-
+    printf("DEBUG: TicksPerSecond: %u\n", pMidiData->getTicksPerSecond());
+    printf("DEBUG: TicksPerSecondError: %u\n", pMidiData->getTicksPerSecondError());
     for(int i = 0; i < numTracks; i++){
         Midi::MidiTrack track;
-        pStrm.seekg(pTrackChunkInfo[i]->fileoffs, pStrm.beg);
+        track.resize(17);
         unsigned int bytesread = 0;
-        unsigned int time = 0;
-        //18710 vs 18726
+        unsigned int absolutetime = 0;
+        pStrm.seekg(pTrackChunkInfo[i]->fileoffs, pStrm.beg);
+
         while(bytesread < pTrackChunkInfo[i]->length){
-            unsigned int current_position = 0;
-            current_position = pStrm.tellg();
-            //printf("Bytesread: %u\n", bytesread);
-            //printf("FilePos: %u \t", current_position);
             unsigned int len = 0;
             unsigned int timestamp = 0;
-            track.push_back(std::move(MidiEventFactory::createMidiEvent(len, pStrm)));
-            printf("tick %u\t", time);
-            track[track.size() - 1]->print();
-            time += track[track.size() - 1]->getTimestamp();
+            unsigned int channelIndex = 0;
+
+            std::shared_ptr<MidiEvent> evt = MidiEventFactory::createMidiEvent(absolutetime, len, pStrm);
+            channelIndex = evt->getChannelIndex();
+            track[channelIndex].addEvent(evt);
+            pMidiData->pAllEvents.push_back(evt);
+            //channel[track.size() - 1]->print();
+            absolutetime = evt->getTimestamp();
             bytesread += len;
         }
-        pMidiData->pTracks.push_back(std::move(track));
-    }
 
+        /*
+        for(unsigned int j = 0; j < 17; j++){
+            track[j].sort();
+        }
+        */
+        pMidiData->pTracks.push_back(track);
+    }
 }
 
 MidiFile::~MidiFile() {

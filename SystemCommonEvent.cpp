@@ -23,6 +23,27 @@ SysCmnEvtEndExclusive::SysCmnEvtEndExclusive(unsigned int timestamp) : MidiEvent
 
 
 
+
+
+void SysCmnEvtExclusive::print(){
+    printf("Exclusive Event\n");
+}
+void SysCmnEvtSongPositionCounter::print(){
+    printf("Song Position Counter: %u\n", this->getSongPosition());
+}
+void SysCmnEvtSongSelect::print(){
+    printf("Song Select: %u\n", this->getSongID());
+}
+void SysCmnEvtTuneRequest::print(){
+    printf("Oscillator Tune Request\n");
+}
+void SysCmnEvtEndExclusive::print(){
+
+}
+
+
+
+
 int SysCmnEvtExclusive::getManufacturerID() const {
     return pManufacturerCode;
 }

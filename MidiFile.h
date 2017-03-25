@@ -13,7 +13,7 @@ class MidiFile {
 public:
 	MidiFile(const std::string& name);
 	~MidiFile();
-    const std::shared_ptr<Midi> data() const;
+    std::shared_ptr<Midi> data();
 protected:
 	void load(const std::string& name);
 	void readChunkInfo();

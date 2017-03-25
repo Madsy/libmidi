@@ -17,29 +17,33 @@ class MidiEventFactory {
 public:
     MidiEventFactory(){};
     ~MidiEventFactory();
-    static std::unique_ptr<MidiEvent> createMidiEvent(unsigned int& bytesread, std::ifstream& strm);
+    static std::shared_ptr<MidiEvent> createMidiEvent(unsigned int absolutetime, unsigned int& bytesread, std::ifstream& strm);
 private:
-    static std::unique_ptr<MidiEvent>
+    static std::shared_ptr<MidiEvent>
     createChannelEvent(unsigned int& bytesread,
                        std::ifstream& strm,
                        MidiEvent::ChannelEventType type,
                        unsigned int timestamp,
+                       unsigned int absolutetime,
                        int channel);
-    static std::unique_ptr<MidiEvent>
+    static std::shared_ptr<MidiEvent>
     createSystemCommonEvent(unsigned int& bytesread,
                             std::ifstream& strm,
                             MidiEvent::SystemCommonEventType type,
-                            unsigned int timestamp);
-    static std::unique_ptr<MidiEvent>
+                            unsigned int timestamp,
+                            unsigned int absolutetime);
+    static std::shared_ptr<MidiEvent>
     createSystemRealtimeEvent(unsigned int& bytesread,
                               std::ifstream& strm,
                               MidiEvent::SystemRealtimeEventType type,
-                              unsigned int timestamp);
-    static std::unique_ptr<MidiEvent>
+                              unsigned int timestamp,
+                              unsigned int absolutetime);
+    static std::shared_ptr<MidiEvent>
     createMetaEvent(unsigned int& bytesread,
-                              std::ifstream& strm,
-                              MidiEvent::MetaEventType type,
-                              unsigned int timestamp);
+                    std::ifstream& strm,
+                    MidiEvent::MetaEventType type,
+                    unsigned int timestamp,
+                    unsigned int absolutetime);
     static unsigned int previousChannelEventCode;
 };
 

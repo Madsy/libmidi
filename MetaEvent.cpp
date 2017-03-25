@@ -41,6 +41,7 @@ MetaEvtEndOfTrack::MetaEvtEndOfTrack(unsigned int timestamp) :
         MidiEvent(timestamp) {
 
 }
+
 MetaEvtSetTempo::MetaEvtSetTempo(unsigned int timestamp, unsigned int tempo) :
         MidiEvent(timestamp), pTempo(tempo){
 
@@ -89,6 +90,88 @@ MetaEvtSequencerSpecific::MetaEvtSequencerSpecific(
         const std::vector<unsigned char> &data) :
         MidiEvent(timestamp), pData(data){
 }
+
+
+
+
+
+
+
+
+
+void MetaEvtSequenceNumber::print() {
+    printf("Sequence Number\n");
+}
+
+void MetaEvtText::print() {
+    printf("Text: \"%s\"\n", this->getText().c_str());
+}
+
+void MetaEvtCopyright::print() {
+    printf("Copyright: %s\n", this->getCopyRight().c_str());
+}
+
+void MetaEvtTrackName::print() {
+    printf("Track Name: %s\n", this->getTrackName().c_str());
+}
+
+void MetaEvtInstrumentName::print() {
+    printf("Instrument Name: %s\n", this->getInstrumentName().c_str());
+}
+
+void MetaEvtLyrics::print() {
+    printf("Lyrics: %s\n", this->getLyrics().c_str());
+}
+
+void MetaEvtMarker::print() {
+    printf("Marker: %s\n", this->getMarker().c_str());
+}
+void MetaEvtCuePoint::print() {
+    printf("Cue Point: %s\n", this->getCuePoint().c_str());
+}
+
+void MetaEvtMidiChannelPrefix::print() {
+    printf("Channel Prefix: %u\n", this->getChannel());
+}
+
+void MetaEvtEndOfTrack::print() {
+    printf("End Of Track\n");
+}
+
+void MetaEvtSetTempo::print() {
+    printf("New Tempo: %u\n", this->getTempo());
+}
+
+void MetaEvtSMPTEOffset::print() {
+    printf("SMPTEOffset: %u:%u:%u:%u:%u\n", this->getHours(), this->getMinutes(), this->getSeconds(), this->getFrames(), this->getSubFrames());
+}
+
+void MetaEvtTimeSignature::print() {
+    printf("Time Signature: %u/%u, CLK/Tick %u, Notes/Clock %u\n", this->getNumerator(), this->getDenominator(), this->getClocksPerTick(),
+           this->getNotesPerClock());
+}
+
+void MetaEvtSequencerSpecific::print() {
+    printf("Sequencer Specific Info: ");
+    const std::vector<unsigned char> d = this->getData();
+    if(d.size()) printf("%02X", d[0]);
+    for(size_t i = 1; i <d.size(); i++){
+        printf(", %02X", d[i]);
+    }
+    printf("\n");
+}
+
+void MetaEvtKeySignature::print() {
+    MidiEvent::print();
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -164,7 +247,7 @@ unsigned int MetaEvtTimeSignature::getClocksPerTick() const {
     return pClocksPerTick;
 }
 
-unsigned int MetaEvtTimeSignature::getNotesperClock() const {
+unsigned int MetaEvtTimeSignature::getNotesPerClock() const {
     return pNotesPerClock;
 }
 
@@ -186,4 +269,6 @@ unsigned int MetaEvtSequencerSpecific::getManufacturerID() const {
 const std::vector<unsigned char> &MetaEvtSequencerSpecific::getData() const {
     return pData;
 }
+
+
 

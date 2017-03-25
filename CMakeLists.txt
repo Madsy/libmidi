@@ -16,5 +16,6 @@ set(SOURCE_FILES
         MidiEventFactory.cpp
         MidiIOUtils.cpp
         MidiIOUtils.h
-        MidiEventFactory.h SystemCommonEvent.cpp SystemCommonEvent.h SystemRealtimeEvent.cpp SystemRealtimeEvent.h MetaEvent.cpp MetaEvent.h)
+        MidiEventFactory.h SystemCommonEvent.cpp SystemCommonEvent.h SystemRealtimeEvent.cpp SystemRealtimeEvent.h MetaEvent.cpp MetaEvent.h MidiChannel.cpp MidiChannel.h)
 add_executable(miditest ${SOURCE_FILES})
+target_link_libraries(miditest "SDL" "sndfile")

@@ -52,12 +52,13 @@ static unsigned int readMetaEvtString(std::string& str, std::ifstream& strm){
 
 
 
-std::unique_ptr<MidiEvent>
+std::shared_ptr<MidiEvent>
 MidiEventFactory::createChannelEvent(
         unsigned int& bytesread,
         std::ifstream& strm,
         MidiEvent::ChannelEventType type,
         unsigned int timestamp,
+        unsigned int absolutetime,
         int channel){
 
 
@@ -108,21 +109,22 @@ MidiEventFactory::createChannelEvent(
         case MidiEvent::ChannelEventType::EVT_PITCH_WHEEL:{
             strm.read((char *) &arg1, 1);
             strm.read((char *) &arg2, 1);
-            unsigned short wheel = (arg2<<7)|arg1;
+            unsigned short wheel = (arg1<<7)|arg2;
             result = new ChEvtPitchWheel(timestamp, channel, (int)wheel);
             bytesread += 2;
             break;
         }
     }
-    return std::unique_ptr<MidiEvent>(result);
+    return std::shared_ptr<MidiEvent>(result);
 }
 
-std::unique_ptr<MidiEvent>
+std::shared_ptr<MidiEvent>
 MidiEventFactory::createSystemCommonEvent(
         unsigned int& bytesread,
         std::ifstream& strm,
         MidiEvent::SystemCommonEventType type,
-        unsigned int timestamp){
+        unsigned int timestamp,
+        unsigned int absolutetime){
 
 
     MidiEvent* result = nullptr;
@@ -146,7 +148,7 @@ MidiEventFactory::createSystemCommonEvent(
         case MidiEvent::SystemCommonEventType::EVT_SONG_POSITION_POINTER:{
             strm.read((char *) &arg1, 1);
             strm.read((char *) &arg2, 1);
-            int timecounter = (arg2<<7)|arg1;
+            int timecounter = (arg1<<7)|arg2;
             //14-bit song position
             result = new SysCmnEvtSongPositionCounter(timestamp, timecounter);
             bytesread += 2;
@@ -169,15 +171,16 @@ MidiEventFactory::createSystemCommonEvent(
             break;
         }
     }
-    return std::unique_ptr<MidiEvent>(result);
+    return std::shared_ptr<MidiEvent>(result);
 }
 
-std::unique_ptr<MidiEvent>
+std::shared_ptr<MidiEvent>
 MidiEventFactory::createSystemRealtimeEvent(
         unsigned int& bytesread,
         std::ifstream& strm,
         MidiEvent::SystemRealtimeEventType type,
-        unsigned int timestamp){
+        unsigned int timestamp,
+        unsigned int absolutetime){
 
 
     MidiEvent* result = nullptr;
@@ -204,19 +207,20 @@ MidiEventFactory::createSystemRealtimeEvent(
             break;
         }
     }
-    return std::unique_ptr<MidiEvent>(result);
+    return std::shared_ptr<MidiEvent>(result);
 }
 
 
 
 
 //readBuffer8BitsUntilF7
-std::unique_ptr<MidiEvent>
+std::shared_ptr<MidiEvent>
 MidiEventFactory::createMetaEvent(
         unsigned int &bytesread,
         std::ifstream &strm,
         MidiEvent::MetaEventType type,
-        unsigned int timestamp) {
+        unsigned int timestamp,
+        unsigned int absolutetime) {
 
     std::string s;
     MidiEvent* result = nullptr;
@@ -226,7 +230,7 @@ MidiEventFactory::createMetaEvent(
         case MidiEvent::MetaEventType::EVT_SEQUENCE_NUMBER:{
             strm.read((char *) &arg1, 1);
             strm.read((char *) &arg2, 1);
-            int timecounter = (arg2<<8)|arg1;
+            int timecounter = (arg1<<7)|arg2;
             //16-bit sequence number
             result = new MetaEvtSequenceNumber(timestamp, timecounter);
             bytesread += 2;
@@ -281,7 +285,7 @@ MidiEventFactory::createMetaEvent(
             strm.read((char *) &arg1, 1);
             strm.read((char *) &arg2, 1);
             strm.read((char *) &arg3, 1);
-            unsigned int tempo = (arg1<<16)|(arg2<<8)|arg3;
+            unsigned int tempo = (arg1<<14)|(arg2<<7)|arg3;
             result = new MetaEvtSetTempo(timestamp, tempo);
             bytesread += 3;
             break;
@@ -320,7 +324,7 @@ MidiEventFactory::createMetaEvent(
         }
 
     }
-    return std::unique_ptr<MidiEvent>(result);
+    return std::shared_ptr<MidiEvent>(result);
 }
 
 
@@ -331,8 +335,9 @@ MidiEventFactory::createMetaEvent(
 
 
 //Event factory function
-std::unique_ptr<MidiEvent>
+std::shared_ptr<MidiEvent>
 MidiEventFactory::createMidiEvent(
+        unsigned int absolutetime,
         unsigned int& bytesread,
         std::ifstream& strm){
 
@@ -352,19 +357,19 @@ MidiEventFactory::createMidiEvent(
         case MidiEvent::MidiEventType::EVT_CHANNEL: {
             MidiEvent::ChannelEventType ChEv = MidiEvent::getChannelEventType(event_type_byte);
             MidiEventFactory::previousChannelEventCode = event_type_byte;
-            return createChannelEvent(bytesread, strm, ChEv, timestamp, (event_type_byte & 0xF));
+            return createChannelEvent(bytesread, strm, ChEv, absolutetime + timestamp, absolutetime, (event_type_byte & 0xF));
         }
         case MidiEvent::MidiEventType::EVT_SYSCOMMON: {
             MidiEvent::SystemCommonEventType SysCmn = MidiEvent::getSystemCommonEventType(event_type_byte);
-            return createSystemCommonEvent(bytesread, strm, SysCmn, timestamp);
+            return createSystemCommonEvent(bytesread, strm, SysCmn, absolutetime + timestamp, absolutetime);
         }
         case MidiEvent::MidiEventType::EVT_SYSRT: {
             MidiEvent::SystemRealtimeEventType SysRt = MidiEvent::getSystemRealtimeEventType(event_type_byte);
-            return createSystemRealtimeEvent(bytesread, strm, SysRt, timestamp);
+            return createSystemRealtimeEvent(bytesread, strm, SysRt, absolutetime + timestamp, absolutetime);
         }
         case MidiEvent::MidiEventType::EVT_META:{
             MidiEvent::MetaEventType Meta = MidiEvent::getMetaEventType(bytesread, strm);
-            return createMetaEvent(bytesread, strm, Meta, timestamp);
+            return createMetaEvent(bytesread, strm, Meta, absolutetime + timestamp, absolutetime);
         }
         case MidiEvent::MidiEventType::EVT_RUNNING_STATUS: {
             //MSB not set, so this is a running status without a code
@@ -374,7 +379,7 @@ MidiEventFactory::createMidiEvent(
             bytesread--;
             strm.seekg(-1, strm.cur);
             MidiEvent::ChannelEventType ChEv = MidiEvent::getChannelEventType(MidiEventFactory::previousChannelEventCode);
-            return createChannelEvent(bytesread, strm, ChEv, timestamp, (MidiEventFactory::previousChannelEventCode & 0xF));
+            return createChannelEvent(bytesread, strm, ChEv, absolutetime + timestamp, absolutetime, (MidiEventFactory::previousChannelEventCode & 0xF));
         }
     }
 }

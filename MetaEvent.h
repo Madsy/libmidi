@@ -13,6 +13,7 @@ class MetaEvtSequenceNumber : public MidiEvent {
     friend class MidiEventFactory;
 public:
     unsigned int getSequenceNumber() const;
+    void print() override;
 protected:
     MetaEvtSequenceNumber(unsigned int timestamp, unsigned int sequenceNum);
 private:
@@ -23,6 +24,7 @@ class MetaEvtText : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getText() const;
+    void print() override;
 protected:
     MetaEvtText(unsigned int timestamp, const std::string& text);
 private:
@@ -33,6 +35,7 @@ class MetaEvtCopyright : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getCopyRight() const;
+    void print() override;
 protected:
     MetaEvtCopyright(unsigned int timestamp, const std::string& copyright);
 private:
@@ -43,6 +46,7 @@ class MetaEvtTrackName : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getTrackName() const;
+    void print() override;
 protected:
     MetaEvtTrackName(unsigned int timestamp, const std::string& trackName);
 private:
@@ -53,6 +57,7 @@ class MetaEvtInstrumentName : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getInstrumentName() const;
+    void print() override;
 protected:
     MetaEvtInstrumentName(unsigned int timestamp, const std::string& instrumentName);
 private:
@@ -63,6 +68,7 @@ class MetaEvtLyrics : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getLyrics() const;
+    void print() override;
 protected:
     MetaEvtLyrics(unsigned int timestamp, const std::string& lyrics);
 private:
@@ -73,6 +79,7 @@ class MetaEvtMarker : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getMarker() const;
+    void print() override;
 protected:
     MetaEvtMarker(unsigned int timestamp, const std::string& marker);
 private:
@@ -83,6 +90,7 @@ class MetaEvtCuePoint : public MidiEvent {
     friend class MidiEventFactory;
 public:
     const std::string& getCuePoint() const;
+    void print() override;
 protected:
     MetaEvtCuePoint(unsigned int timestamp, const std::string& cue);
 private:
@@ -93,6 +101,7 @@ class MetaEvtMidiChannelPrefix : public MidiEvent {
     friend class MidiEventFactory;
 public:
     unsigned int getChannel() const;
+    void print() override;
 protected:
     MetaEvtMidiChannelPrefix(unsigned int timestamp, unsigned int channel);
 private:
@@ -101,6 +110,7 @@ private:
 
 class MetaEvtEndOfTrack : public MidiEvent {
     friend class MidiEventFactory;
+    void print() override;
 protected:
     MetaEvtEndOfTrack(unsigned int timestamp);
 };
@@ -109,6 +119,7 @@ class MetaEvtSetTempo : public MidiEvent {
     friend class MidiEventFactory;
 public:
     unsigned int getTempo() const;
+    void print() override;
     //24 bit tempo
 protected:
     MetaEvtSetTempo(unsigned int timestamp, unsigned int tempo);
@@ -125,6 +136,7 @@ public:
     unsigned int getSeconds() const;
     unsigned int getFrames() const;
     unsigned int getSubFrames() const;
+    void print() override;
 protected:
     MetaEvtSMPTEOffset(unsigned int timestamp, unsigned int hours, unsigned int minutes, unsigned int seconds, unsigned int frames, unsigned int frame_fraction);
 private:
@@ -141,7 +153,8 @@ public:
     unsigned int getNumerator() const;
     unsigned int getDenominator() const;
     unsigned int getClocksPerTick() const;
-    unsigned int getNotesperClock() const;
+    unsigned int getNotesPerClock() const;
+    void print() override;
     //notes_per_clock is number of 1/32 notes per 24 midi clocks. Usually 8, so 1/4 note = 24 midi clocks
 protected:
     MetaEvtTimeSignature(unsigned int timestamp, unsigned int numerator, unsigned int denominator, unsigned int clocks_per_tick, unsigned int notes_per_clock);
@@ -157,6 +170,7 @@ class MetaEvtKeySignature : public MidiEvent {
 public:
     unsigned int getSharpFlats() const;
     unsigned int getMinorMajor() const;
+    void print() override;
 protected:
     MetaEvtKeySignature(unsigned int timestamp, unsigned int sharpflats, unsigned int minormajor);
 private:
@@ -169,6 +183,7 @@ class MetaEvtSequencerSpecific : public MidiEvent {
 public:
     unsigned int getManufacturerID() const;
     const std::vector<unsigned char>& getData() const;
+    void print() override;
 protected:
     MetaEvtSequencerSpecific(unsigned int timestamp, const std::vector<unsigned char>& data);
 private:

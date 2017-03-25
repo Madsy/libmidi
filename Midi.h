@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include "MidiEvent.h"
+#include "MidiChannel.h"
 
 class MidiFile;
 
@@ -25,19 +26,26 @@ public:
         MIDI_TIME_TYPE_SMPTE
     };
 
-    typedef std::unique_ptr<MidiEvent> MidiEventPtr;
-    typedef std::vector<MidiEventPtr> MidiTrack;
+    typedef std::shared_ptr<MidiEvent> MidiEventPtr;
+    typedef std::vector<MidiEventPtr> MidiEventArray;
+    typedef std::vector<MidiChannel> MidiTrack;
 
-    Midi();
     ~Midi();
     Midi(const Midi& m);
     MidiFileFormat getFileFormat() const;
     MidiTimeFormat getTimeFormat() const;
     size_t getTrackCount() const;
+    unsigned int getTicksPerSecond() const;
+    unsigned int getTicksPerSecondError() const;
+    const MidiTrack& getTrack(unsigned int index) const;
+    const MidiEventArray& getAllEvents() const;
+protected:
+    Midi();
 private:
     MidiFileFormat pMidiFileFormat;
     MidiTimeFormat pMidiTimeFormat;
     std::vector<MidiTrack> pTracks;
+    MidiEventArray pAllEvents;
     //when using the Ticks Per Quarter Note format, compute pTicksPerSecond based on pTPQN_BeatsPerMinute
     //pTPQN_BeatsPerMinute defaults to 120bpm, but can be specified by tempo MIDI events
     int pTPQN_BeatsPerMinute;
@@ -54,8 +62,6 @@ private:
     //When pTicksPerSecondError == 60, increase tick accumulator by 1
     int pTicksPerSecondError;
 };
-
-
 
 #endif //MIDITEST_MIDI_H
 

@@ -16,7 +16,7 @@ class MidiEventFactory;
 class ChannelEvent : public MidiEvent {
 public:
     friend class MidiEventFactory;
-    int getChannel() const;
+    virtual unsigned int pGetChannelIndex() const override;
     void print() override;
 protected:
     ChannelEvent(unsigned int timestamp, int ch);

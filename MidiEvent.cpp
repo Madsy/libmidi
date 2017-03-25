@@ -152,7 +152,7 @@ MidiEvent::MidiEvent() {
 
 }
 
-float MidiEvent::getTimestamp() const {
+unsigned int MidiEvent::getTimestamp() const {
     return pTick;
 }
 
@@ -163,6 +163,16 @@ void MidiEvent::print() {
 MidiEvent::MidiEvent(unsigned int timestamp) : pTick(timestamp){
 
 }
+
+unsigned int MidiEvent::pGetChannelIndex() const {
+    return 0;
+}
+
+unsigned int MidiEvent::getChannelIndex() const {
+    return pGetChannelIndex();
+}
+
+
 
 
 

@@ -56,8 +56,13 @@ static std::string noteToString(unsigned int key){
 }
 
 void ChannelEvent::print() {
-    printf("ChannelEvent, Channel %u\t", this->getChannel());
+    //printf("ChannelEvent, Channel %u\t", this->getChannel() + 1);
 }
+
+unsigned int ChannelEvent::pGetChannelIndex() const {
+    return pChannel + 1;
+}
+
 void ChEvtNoteOff::print() {
     ChannelEvent::print();
     printf("NoteOff Event, Note %s, Velocity %u\n", noteToString(this->getKey()).c_str(), this->getVelocity());
@@ -94,11 +99,6 @@ void ChEvtPitchWheel::print() {
 
 
 
-
-
-int ChannelEvent::getChannel() const {
-    return pChannel;
-}
 
 int ChEvtNoteOff::getKey() const {
     return pKey;

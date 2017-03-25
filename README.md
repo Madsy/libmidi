@@ -2,6 +2,11 @@
 
 A simple library for reading .mid files. Work in progress.
 
+#### Dependencies
+
++ libSDL (for the player example, main.cpp)
++ libsndfile
+
 #### What is already done?
 
 + Reading the chunk info

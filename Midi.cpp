@@ -28,3 +28,19 @@ Midi::~Midi() {
 
 }
 
+unsigned int Midi::getTicksPerSecond() const {
+    return pTicksPerSecond;
+}
+
+unsigned int Midi::getTicksPerSecondError() const {
+    return pTicksPerSecondError;
+}
+
+const Midi::MidiTrack &Midi::getTrack(unsigned int index) const {
+    return pTracks[index];
+}
+
+const Midi::MidiEventArray &Midi::getAllEvents() const {
+    return pAllEvents;
+}
+

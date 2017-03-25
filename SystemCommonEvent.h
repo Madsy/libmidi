@@ -14,6 +14,7 @@ class SysCmnEvtExclusive : public MidiEvent {
 public:
     int getManufacturerID() const;
     const std::vector<unsigned char>& getData() const;
+    void print() override;
 protected:
     SysCmnEvtExclusive(unsigned int timestamp, int manufacturer_code, const std::vector<unsigned char>& data);
 private:
@@ -25,6 +26,7 @@ class SysCmnEvtSongPositionCounter : public MidiEvent {
     friend class MidiEventFactory;
 public:
     int getSongPosition() const;
+    void print() override;
 protected:
     SysCmnEvtSongPositionCounter(unsigned int timestamp, int pos);
 private:
@@ -35,6 +37,7 @@ class SysCmnEvtSongSelect : public MidiEvent {
     friend class MidiEventFactory;
 public:
     int getSongID() const;
+    void print() override;
 protected:
     SysCmnEvtSongSelect(unsigned int timestamp, int songid);
 private:
@@ -45,6 +48,8 @@ private:
 //Oscillators should be tunes. No data in this class.
 class SysCmnEvtTuneRequest : public MidiEvent {
     friend class MidiEventFactory;
+public:
+    void print() override;
 protected:
     SysCmnEvtTuneRequest(unsigned int timestamp);
 };
@@ -52,6 +57,8 @@ protected:
 //Marks the end of an exclusive message. No data in this class.
 class SysCmnEvtEndExclusive : public MidiEvent {
     friend class MidiEventFactory;
+public:
+    void print() override;
 protected:
     SysCmnEvtEndExclusive(unsigned int timestamp);
 };

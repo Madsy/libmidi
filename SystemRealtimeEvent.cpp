@@ -25,3 +25,23 @@ SysRtEvtActiveSensing::SysRtEvtActiveSensing(unsigned int timestamp) : MidiEvent
 }
 
 
+void SysRtEvtTimingClock::print() {
+    printf("Realtime Event: Timing Clock\n");
+}
+
+void SysRtEvtStart::print() {
+    printf("Realtime Event: Start\n");
+}
+
+void SysRtEvtContinue::print() {
+    printf("Realtime Event: Continue\n");
+}
+
+void SysRtEvtStop::print() {
+    printf("Realtime Event: Stop\n");
+}
+
+void SysRtEvtActiveSensing::print() {
+    printf("Realtime Event: Active Sensing\n");
+}
+

@@ -120,6 +120,8 @@ public:
     };
 
     MidiEvent(unsigned int timestamp);
+    unsigned int getChannelIndex() const;
+    //unsigned int getChannelIndex() const;
     /* High level message group */
     static MidiEvent::MidiEventType getEventType(unsigned char event);
     /* Classify the sub-type of the events */
@@ -129,8 +131,10 @@ public:
     //Special case. Meta event types are not fixed in length. Some codes are up to 3 bytes.
     static MidiEvent::MetaEventType getMetaEventType(unsigned int& bytesread, std::ifstream& strm);
     MidiEvent();
-    virtual float getTimestamp() const;
+    virtual unsigned int getTimestamp() const;
     virtual void print();
+protected:
+    virtual unsigned int pGetChannelIndex() const; //returns channel 0 for all non-channel events
 private:
     unsigned int pTick; //used for timestamps
 };
